@@ -37,7 +37,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get purge -y wget automake autotools-dev 
     apt-get -y autoremove --purge && apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Runs "/usr/bin/dumb-init -- CMD_COMMAND_HERE"
 #ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
-CMD echo "${AWS_KEY}:${AWS_SECRET_KEY}" > /etc/passwd-s3fs && /usr/local/bin/s3fs $S3_BUCKET $MNT_POINT -f -o endpoint=${S3_REGION},allow_other,retries=5,connect_timeout=10
+CMD echo "${AWS_KEY}:${AWS_SECRET_KEY}" > /etc/passwd-s3fs && echo "X" && /usr/local/bin/s3fs $S3_BUCKET $MNT_POINT -f -o endpoint=${S3_REGION},allow_other,retries=5,connect_timeout=10,umask=0000

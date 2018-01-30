@@ -9,7 +9,7 @@ ENV ldap_bind_pass=""
 ENV ldap_uri=""
 
 # Install websvn
-RUN apt-get update && apt-get install -y wget curl
+RUN apt-get update && apt-get install -y wget curl inotify-tools
 RUN sh -c 'echo "deb http://opensource.wandisco.com/ubuntu `lsb_release -cs` svn19" >> /etc/apt/sources.list.d/subversion19.list'
 RUN wget -q http://opensource.wandisco.com/wandisco-debian.gpg -O- | sudo apt-key add -
 
@@ -39,7 +39,7 @@ RUN perl -pi -e \
     /etc/websvn/config.php
 # Set up auth
 RUN perl -pi -e \
-    "s/\/\/ \\\$config->useAuthenticationFile([^,]+);/\\\$config->useAuthenticationFile('\/svn\/svn.authz');/g" \
+    "s/\/\/ \\\$config->useAuthenticationFile([^,]+);/\\\$config->useAuthenticationFile('\/svn-config\/svn.authz');/g" \
     /etc/websvn/config.php
 
 # Add the websv apache configuration and enable the site
@@ -50,13 +50,15 @@ RUN a2enmod expires auth_digest authz_groupfile ldap authnz_ldap && \
 # Add the start script
 ADD start /opt/
 ADD update_websvn.sh /opt/
-RUN chmod +x /opt/update_websvn.sh
+ADD auto-apache-reload.sh /opt/
+RUN chmod +x /opt/update_websvn.sh && chmod +x /opt/auto-apache-reload.sh
 RUN cp /etc/apache2/mods-available/authnz_ldap.load /etc/apache2/mods-available/mods-enabled
 
 # Archives and configuration are stored in /svn
+VOLUME [ "/svn-config" ]
 VOLUME [ "/svn" ]
 
 # Expose public port for web server
 EXPOSE 80
 
-CMD /opt/update_websvn.sh && apachectl -D FOREGROUND
+CMD /opt/update_websvn.sh && apachectl start && /opt/auto-apache-reload.sh
