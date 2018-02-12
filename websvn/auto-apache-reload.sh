@@ -14,8 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-inotifywait -e access -m -r --format '%:e %f' /svn-config/ | while read EVENT; do
+inotifywait -e access -m -r --format '%:e %f' /svn-config/config | while read EVENT; do
     echo "updating apache"
     apachectl restart
 done
- 

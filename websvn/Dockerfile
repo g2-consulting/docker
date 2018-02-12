@@ -39,7 +39,7 @@ RUN perl -pi -e \
     /etc/websvn/config.php
 # Set up auth
 RUN perl -pi -e \
-    "s/\/\/ \\\$config->useAuthenticationFile([^,]+);/\\\$config->useAuthenticationFile('\/svn-config\/svn.authz');/g" \
+    "s/\/\/ \\\$config->useAuthenticationFile([^,]+);/\\\$config->useAuthenticationFile('\/svn-config\/config\/svn.authz');/g" \
     /etc/websvn/config.php
 
 # Add the websv apache configuration and enable the site
