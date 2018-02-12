@@ -21,6 +21,7 @@ LogLevel debug
   AuthType Basic
   AuthBasicProvider ldap
   AuthName "SVN"
+  SVNReposName "ihm"
   AuthLDAPUrl "ldap://{{ ldap_host }}/{{ ldap_uri }}"
   AuthLDAPBindDN "{{ ldap_bind_dn }}"
   AuthLDAPBindPassword {{ ldap_bind_pass }}
@@ -31,11 +32,14 @@ LogLevel debug
   DAV svn
   SVNParentPath "/svn"
   AuthType Basic
+  SVNReposName "ihm"
   AuthBasicProvider ldap
   AuthName "SVN"
   AuthLDAPUrl "ldap://{{ ldap_host }}/{{ ldap_uri }}"
   AuthLDAPBindDN "{{ ldap_bind_dn }}"
   AuthLDAPBindPassword {{ ldap_bind_pass }}
+  SVNPathAuthz on
+  AuthzSVNAccessFile /svn-config/config/svn.authz  
   require valid-user
 </Location>
 
