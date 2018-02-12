@@ -14,7 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-inotifywait -e access -m -r --format '%:e %f' /svn-config/config | while read EVENT; do
-    echo "updating apache"
-    apachectl restart
+oldcksum=`cksum /svn-config/config/svn.authz`
+
+inotifywait -e modify,move,create,delete -mr --timefmt '%d/%m/%y %H:%M' --format '%T' \
+/svn-config/config/ | while read date time; do
+
+    newcksum=`cksum /svn-config/config/svn.authz`
+    if [ "$newcksum" != "$oldcksum" ]; then
+        echo "At ${time} on ${date}, config file update detected."
+        oldcksum=$newcksum
+        apachectl restart
+    fi
+
 done
